@@ -90,6 +90,7 @@ To get a local copy up and running follow these simple steps.
 * [Fedora Netinstall - Everything](https://www.fedoraproject.org/misc#everything)
 * Non-root user created **but must be sudoers**
 * Internet connection
+* Change the hostname in the script and put whathever software you need
 
 ### Installation
  

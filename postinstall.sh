@@ -61,21 +61,6 @@ backup_file() {
     fi
 }
 
-echo ""
-echo "╔═════════════════════════════════════════════════════════════════════════════╗"
-echo "║                                                                             ║"
-echo "║   ░█▀▀░█▀▀░█▀▄░█▀█░█▀▄░█▀█░░░█░█░█▀█░█▀▄░█░█░█▀▀░▀█▀░█▀█░▀█▀░▀█▀░█▀█░█▀█░   ║"
-echo "║   ░█▀▀░█▀▀░█░█░█░█░█▀▄░█▀█░░░█▄█░█░█░█▀▄░█▀▄░▀▀█░░█░░█▀█░░█░░░█░░█░█░█░█░   ║"
-echo "║   ░▀░░░▀▀▀░▀▀░░▀▀▀░▀░▀░▀░▀░░░▀░▀░▀▀▀░▀░▀░▀░▀░▀▀▀░░▀░░▀░▀░░▀░░▀▀▀░▀▀▀░▀░▀░   ║"
-echo "║   ░░░░░░░░░░░░▀█▀░█░█░▀█▀░█▀█░█▀▀░█▀▀░░░▀█▀░█▀█░░░█▀▄░█▀█░█░░░░░░░░░░░░░░   ║"
-echo "║   ░░░░░░░░░░░░░█░░█▀█░░█░░█░█░█░█░▀▀█░░░░█░░█░█░░░█░█░█░█░▀░░░░░░░░░░░░░░   ║"
-echo "║   ░░░░░░░░░░░░░▀░░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░░░░▀░░▀▀▀░░░▀▀░░▀▀▀░▀░░░░░░░░░░░░░░   ║"
-echo "║                                                                             ║"
-echo "╚═════════════════════════════════════════════════════════════════════════════╝"
-echo ""
-echo "Post-install: Fedora netinstall → KDE + apps + gaming"
-echo "ver. 25.08 / 100 Stars Edition"
-echo ""
 echo "Don't run this script if you didn't build it yourself or don't know what it does."
 echo ""
 read -p "Press Enter to continue or CTRL+C to cancel..."
@@ -91,7 +76,7 @@ dnf upgrade -y --refresh
 
 # System Configuration
 color_echo "yellow" "Setting hostname..."
-hostnamectl set-hostname flo-pc
+hostnamectl set-hostname fedora-kde-host
 
 # Optimize DNF package manager
 color_echo "yellow" "Configuring DNF Package Manager..."
@@ -158,7 +143,7 @@ dnf -y group upgrade multimedia --setopt="install_weak_deps=False" --exclude=Pac
 dnf -y group install sound-and-video || true
 dnf -y group upgrade sound-and-video
 
-# AMD HW codecs (freeworld) - keep swap (your choice)
+# AMD HW codecs (freeworld)
 color_echo "yellow" "Installing AMD Hardware Accelerated Codecs..."
 dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld || true
 dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld || true
