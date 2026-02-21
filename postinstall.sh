@@ -110,17 +110,31 @@ keepcache=True
 EOF
 fi
 
-# Enable and configure automatic system updates
-color_echo "yellow" "Enabling DNF autoupdate..."
+# Enable and configure automatic system updates (Option A: download only)
+color_echo "yellow" "Configuring DNF automatic updates (download only)..."
 dnf install -y dnf-automatic
 backup_file "/etc/dnf/automatic.conf"
-# Apply even if key missing
+
+# Ensure keys exist + set download only
 if grep -q "^apply_updates" /etc/dnf/automatic.conf; then
-  sed -i 's/^apply_updates\s*=\s*no/apply_updates = yes/' /etc/dnf/automatic.conf
+  sed -i 's/^apply_updates\s*=.*/apply_updates = no/' /etc/dnf/automatic.conf
 else
-  echo "apply_updates = yes" >> /etc/dnf/automatic.conf
+  echo "apply_updates = no" >> /etc/dnf/automatic.conf
 fi
+
+if grep -q "^download_updates" /etc/dnf/automatic.conf; then
+  sed -i 's/^download_updates\s*=.*/download_updates = yes/' /etc/dnf/automatic.conf
+else
+  echo "download_updates = yes" >> /etc/dnf/automatic.conf
+fi
+
 systemctl enable --now dnf-automatic.timer
+
+# Flatpak + Flathub (needed for flatpak installs later)
+color_echo "yellow" "Configuring Flatpak + Flathub..."
+dnf install -y flatpak
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak update -y || true
 
 # Firmware updates
 color_echo "yellow" "Checking for firmware updates..."
@@ -135,19 +149,16 @@ dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-releas
 dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 dnf update -y @core
 
+# Multimedia codecs
 color_echo "yellow" "Installing multimedia codecs..."
-# (Optionnel) uniquement pour Discover/GNOME Software
 dnf -y install rpmfusion-free-appstream-data rpmfusion-nonfree-appstream-data || true
-# FFmpeg complet (RPM Fusion)
 dnf -y swap ffmpeg-free ffmpeg --allowerasing
-# Codecs / GStreamer via groupes
 dnf -y group install multimedia || true
 dnf -y group upgrade multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
-# Compléments audio/vidéo
 dnf -y group install sound-and-video || true
 dnf -y group upgrade sound-and-video
 
-# AMD HW codecs (freeworld)
+# AMD HW codecs (freeworld) - keep swap (your choice)
 color_echo "yellow" "Installing AMD Hardware Accelerated Codecs..."
 dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld || true
 dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld || true
@@ -164,7 +175,11 @@ dnf -y groupinstall "KDE Plasma Workspaces" || dnf -y install @kde-desktop-envir
 dnf -y install sddm plasma-workspace-wayland
 
 systemctl set-default graphical.target
-systemctl enable --now sddm
+systemctl enable sddm
+
+# Tools useful for your AMD + gaming validation
+color_echo "yellow" "Installing GPU/CPU diagnostic tools..."
+dnf install -y vulkan-tools mesa-demos kernel-tools
 
 # App Installation
 color_echo "yellow" "Installing essential applications..."
@@ -237,10 +252,6 @@ fi
 
 # GameMode user service (best-effort, may be skipped if user session isn't ready yet)
 sudo -u "$ACTUAL_USER" env HOME="$ACTUAL_HOME" bash -lc 'systemctl --user enable --now gamemoded.service || true'
-
-color_echo "yellow" "Installing RustDesk..."
-flatpak install -y flathub com.rustdesk.RustDesk
-color_echo "green" "RustDesk installed successfully."
 
 color_echo "yellow" "Installing ProtonUp-Qt..."
 flatpak install -y flathub net.davidotek.pupgui2
