@@ -17,19 +17,17 @@ reboot
 eula --agreed
 
 lang fr_FR.UTF-8
-keyboard --vckeymap=us --xlayouts='us'
+keyboard --vckeymap=us --xlayouts=us
 timezone Europe/Paris --utc
 
-network --bootproto=dhcp --device=link --activate --onboot=on
+network --bootproto=dhcp --activate --onboot=on
 
 services --enabled="NetworkManager,sshd,firewalld"
 firewall --enabled --service=ssh
 selinux --enforcing
 
-# Install source (Fedora 43 + updates)
-install
-url --mirrorlist="https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-43&arch=x86_64"
-repo --name="updates" --mirrorlist="https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f43&arch=x86_64"
+url --metalink="https://mirrors.fedoraproject.org/metalink?repo=fedora-43&arch=x86_64"
+repo --name="updates" --metalink="https://mirrors.fedoraproject.org/metalink?repo=updates-released-f43&arch=x86_64"
 
 # ---------- %pre: require ks_disk and ks_repo ----------
 %pre --interpreter=/bin/bash
@@ -77,7 +75,7 @@ EOF
 if [[ -n "${KS_PW_HASH}" ]]; then
   cat > /tmp/user.ks <<EOF
 rootpw --lock
-user --name=${KS_USER} --groups=wheel --password=${KS_PW_HASH} --iscrypted
+user --name=${KS_USER} --groups=wheel --password="${KS_PW_HASH}" --iscrypted
 EOF
 else
   cat > /tmp/user.ks <<EOF
