@@ -122,14 +122,6 @@ else
 fi
 systemctl enable --now dnf-automatic.timer
 
-# Flatpak + Flathub
-color_echo "yellow" "Replacing Fedora Flatpak Repo with Flathub..."
-dnf install -y flatpak
-flatpak remote-delete fedora --force || true
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak repair -y || true
-flatpak update -y || true
-
 # Firmware updates
 color_echo "yellow" "Checking for firmware updates..."
 dnf install -y fwupd || true
@@ -145,8 +137,10 @@ dnf update -y @core
 
 # Multimedia codecs
 color_echo "yellow" "Installing multimedia codecs..."
+dnf -y install rpmfusion-nonfree-appstream-data
+dnf -y install rpmfusion-free-appstream-data
 dnf swap -y ffmpeg-free ffmpeg --allowerasing
-dnf update -y @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
+dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
 dnf update -y @sound-and-video
 
 # AMD HW codecs (freeworld)
