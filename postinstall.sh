@@ -135,13 +135,17 @@ dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-releas
 dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 dnf update -y @core
 
-# Multimedia codecs
 color_echo "yellow" "Installing multimedia codecs..."
-dnf -y install rpmfusion-nonfree-appstream-data
-dnf -y install rpmfusion-free-appstream-data
-dnf swap -y ffmpeg-free ffmpeg --allowerasing
-dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
-dnf update -y @sound-and-video
+# (Optionnel) uniquement pour Discover/GNOME Software
+dnf -y install rpmfusion-free-appstream-data rpmfusion-nonfree-appstream-data || true
+# FFmpeg complet (RPM Fusion)
+dnf -y swap ffmpeg-free ffmpeg --allowerasing
+# Codecs / GStreamer via groupes
+dnf -y group install multimedia || true
+dnf -y group upgrade multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
+# Compléments audio/vidéo
+dnf -y group install sound-and-video || true
+dnf -y group upgrade sound-and-video
 
 # AMD HW codecs (freeworld)
 color_echo "yellow" "Installing AMD Hardware Accelerated Codecs..."
