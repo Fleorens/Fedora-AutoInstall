@@ -1,16 +1,10 @@
-<!-- ABOUT THE PROJECT -->
 ## About The Project
-
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
 Post-installation script to transform a Fedora Netinstall (minimal) into a ready-to-use:
 
 * KDE Plasma desktop (Wayland)
-
 * Gaming-ready system
-
 * Multimedia-enabled workstation
-
 * Developer-friendly environment
 
 With the help of [Not Another 'Things To Do'!](https://nattdf.streamlit.app/)
@@ -19,23 +13,28 @@ I've made this script **for me and my own computer** but it may be useful for th
 
 ### Built With
 
-* 🖊️ Bash
+* Bash
 
-### What It Does
+### How It Works
 
-The script:
+The script is **modular and interactive**. On launch, you choose which modules to install:
 
-* Updates the system
-* Enables RPM Fusion (free + nonfree)
-* Installs multimedia codecs (ffmpeg + freeworld)
-* Installs KDE Plasma + SDDM
-* Configures graphical target
-* Installs gaming stack (Steam, Heroic, GameMode, MangoHud…)
-* Installs essential applications _(for me of course)_
-* Configures tuned (performance profile)
-* Sets up Flatpak + Flathub
+| Module | Description | Required |
+|--------|-------------|----------|
+| **System Base** | System upgrade, hostname, base tools | Always |
+| **DNF Config** | Parallel downloads, automatic updates | Always |
+| **Multimedia** | RPM Fusion, ffmpeg, AMD HW codecs | Optional |
+| **KDE Plasma** | KDE desktop + SDDM (Wayland) | Optional |
+| **Flatpak** | Flatpak + Flathub repository | Optional |
+| **Firmware** | Firmware updates via fwupd | Optional |
+| **Virtualization** | libvirt, qemu | Optional |
+| **Gaming** | Steam, Heroic, MangoHud, GameMode... | Optional |
+| **Dev Tools** | VS Code, GitHub Desktop, git, htop... | Optional |
+| **Applications** | Chromium, Thunderbird, Discord, VLC... | Optional |
 
-### Complete list of features
+Some modules (Gaming, Dev Tools, Applications) also ask individually for each application, so you can pick exactly what you need.
+
+### Complete list of available software
 
 #### Desktop
 
@@ -43,7 +42,7 @@ The script:
 * SDDM display manager
 * Graphical target enabled
 
-#### Gaming Sofware
+#### Gaming Software
 
 * Steam
 * Heroic Games Launcher
@@ -80,34 +79,30 @@ The script:
 * VLC
 * RustDesk
 
-<!-- GETTING STARTED -->
 ## Getting Started
-
-To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
 * [Fedora Netinstall - Everything](https://www.fedoraproject.org/misc#everything)
 * Non-root user created **but must be sudoers**
 * Internet connection
-* Change the hostname in the script and put whathever software you need
+* (Optional) Change the `HOSTNAME` variable at the top of the script
 
 ### Installation
- 
-1. Complete the NetInstall with your own parameters (disk configuration, user creation, ... **BUT** you should net the software selection with only **Fedora Custom Operating System** and nothing else)
+
+1. Complete the NetInstall with your own parameters (disk configuration, user creation, ... **BUT** you should set the software selection with only **Fedora Custom Operating System** and nothing else)
 2. When initial configuration and installation is finished, you'll boot in TTY
-3. You must do :
+3. Run:
 ```
 curl -fsSLO https://raw.githubusercontent.com/Fleorens/Fedora-AutoInstall/main/postinstall.sh
 chmod +x postinstall.sh
 sudo ./postinstall.sh
 ```
-4. Then, you wait. If you're prompted to reboot due to firmware upgrade or anything else, you can and then relaunch the script.
-5. When finished, you'll be ask to reboot.
-6. Enjoy
+4. The script will present a module selection menu. Choose what you need.
+5. Within some modules (Gaming, Dev Tools, Apps), you'll be asked for each application individually.
+6. If you're prompted to reboot due to firmware upgrade, you can and then relaunch the script.
+7. When finished, you'll be asked to reboot.
 
-
-<!-- USAGE EXAMPLES -->
 ## Security Notice
 
 Always:
